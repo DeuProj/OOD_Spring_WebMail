@@ -12,6 +12,8 @@ import java.io.IOException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -69,7 +71,10 @@ public class WriteController {
                 return "redirect:/write_mail";
             }
         }
-        boolean sendSuccessful = sendMessage(to, cc, subj, body, upFile);
+        // 메일 내용 필터링 및 검증
+        String sanitizedBody = sanitizeInput(body);
+        
+        boolean sendSuccessful = sendMessage(to, cc, subj, sanitizedBody, upFile);
         if (sendSuccessful) {
             attrs.addFlashAttribute("msg", "메일 전송이 성공했습니다.");
         } else {
@@ -123,4 +128,24 @@ public class WriteController {
         }
         return status;
     }  // sendMessage()
+    
+    private String sanitizeInput(String input) {
+        // HTML 태그 및 스크립트 코드 제거를 위해 Jsoup 라이브러리 사용
+        String sanitizedInput = Jsoup.clean(input, Safelist.none());
+        
+        // SQL 인젝션 방지를 위한 필터링
+        sanitizedInput = sanitizedInput.replaceAll("(?i)\\b(SELECT|INSERT|UPDATE|DELETE|FROM|WHERE)\\b", "");
+
+        // 추가적인 필터링 및 검증 로직 구현이 필요한 경우 여기에 추가
+        
+        /*
+        // 예: 특정 키워드 필터링
+        String[] forbiddenKeywords = {"badword1", "badword2", "badword3"};
+        for (String keyword : forbiddenKeywords) {
+            sanitizedInput = sanitizedInput.replaceAll("(?i)" + keyword, "****");
+        }
+        */
+        
+        return sanitizedInput;
+    }
 }
