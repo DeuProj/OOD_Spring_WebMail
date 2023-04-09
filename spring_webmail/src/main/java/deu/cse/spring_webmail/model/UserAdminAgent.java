@@ -302,4 +302,50 @@ public class UserAdminAgent {
             return status;
         }
     }
+
+    public boolean setPassword(String s_id, String s_pw, String currentPassword, String newPassword, String checkPassword) {
+        boolean status = false;
+        byte[] messageBuffer = new byte[1024];
+        log.debug("setPassword() called");
+        
+        if (!isConnected) {
+            return status;
+        }
+        try {
+            // 현재 비밀번호가 입력한 비밀번호와 일치한다면
+            if (s_pw.equals(currentPassword)) {
+                if (newPassword.equals(checkPassword)) { //새롭게 입력한 비밀번호가 일치한다면
+                    // 1: "setpassword" command
+                    String setPasswordCommand = "setpassword " + s_id + " " + newPassword + EOL;
+                    os.write(setPasswordCommand.getBytes());
+
+                    // 2: response for "setpassword" command
+                    java.util.Arrays.fill(messageBuffer, (byte) 0);
+                    is.read(messageBuffer);
+                    String recvMessage = new String(messageBuffer);
+                    log.debug(recvMessage);
+
+                    // 3: Check the status of the response
+                    // "Password for {userId} reset"을 반환하기 때문
+                    if (recvMessage.contains("reset")) {
+                        status = true;
+                    } else {
+                        status = false;
+                    }
+                } else { //새롭게 입력한 비밀번호가 일치하지 않으면
+                    status = false;
+                }
+            } else { //입력한 비밀번호가 현재 비밀번호와 일치하지 않으면
+                status = false;
+            }
+            // 4: Disconnect from the server
+            quit();
+            System.out.flush();
+            socket.close();
+        } catch (Exception ex) {
+            log.error("setPassword 예외: {}", ex.getMessage());
+            status = false;
+        }
+        return status;
+    }   //setPassword()
 }

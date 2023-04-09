@@ -86,6 +86,7 @@ public class SystemController {
                     if (isAdmin(userid)) {
                         // HttpSession 객체에 userid를 등록해 둔다.
                         session.setAttribute("userid", userid);
+                        session.setAttribute("password", password);
                         // response.sendRedirect("admin_menu.jsp");
                         url = "redirect:/admin_menu";
                     } else {
@@ -178,6 +179,65 @@ public class SystemController {
         return "redirect:/admin_menu";
     }
 
+    @GetMapping("/set_password")
+    public String setPassword() {
+        return "set_password";
+    }
+
+    @PostMapping("/set_password.do")
+    public String setPasswordDo(@RequestParam String currentPassword, @RequestParam String newPassword, @RequestParam String checkPassword,
+            RedirectAttributes attrs, HttpSession session) {
+        // 세션에 있는 id, pw값 가져오기
+        String s_id = (String) session.getAttribute("userid");
+        String s_pw = (String) session.getAttribute("password");
+        log.debug("change_password.do: currentPassword = {}, newPassword = {}, port = {}",
+                currentPassword, newPassword, JAMES_CONTROL_PORT);
+        try {
+            String cwd = ctx.getRealPath(".");
+            UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
+                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
+
+            // 한글 검사
+            if (isKorean(newPassword)) {
+                attrs.addFlashAttribute("msg", String.format("비밀번호에 한글은 입력할 수 없습니다."));
+                return "redirect:/admin_menu";
+            }
+
+            // if (setPassword successful) 비밀번호 변경 성공 팝업창
+            // else 비밀번호 변경 실패 팝업창
+            if (agent.setPassword(s_id, s_pw, currentPassword, newPassword, checkPassword)) {
+                attrs.addFlashAttribute("msg", String.format("비밀번호 변경을 성공하였습니다."));
+                return "redirect:/";
+            } else {
+                attrs.addFlashAttribute("msg", String.format("비밀번호 변경을 실패하였습니다."));
+                if (isAdmin(s_id)) {
+                    return "redirect:/admin_menu";
+                } else {
+                    return "redirect:/main_menu";
+                }
+            }
+        } catch (Exception ex) {
+            log.error("set_password.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
+            if (isAdmin(s_id)) {
+                return "redirect:/admin_menu";
+            } else {
+                return "redirect:/main_menu";
+            }
+        }
+    }
+
+    //한글이 있는지에 대한 검사
+    private boolean isKorean(String str) {
+        for (char c : str.toCharArray()) {
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO
+                    || Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HANGUL_JAMO
+                    || Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HANGUL_SYLLABLES) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @GetMapping("/delete_user")
     public String deleteUser(Model model) {
         log.debug("delete_user called");
@@ -226,9 +286,9 @@ public class SystemController {
 
     /**
      * https://34codefactory.wordpress.com/2019/06/16/how-to-display-image-in-jsp-using-spring-code-factory/
-     * 
+     *
      * @param imageName
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/get_image/{imageName}")
     @ResponseBody
@@ -248,7 +308,7 @@ public class SystemController {
         byte[] imageInByte;
         try {
             byteArrayOutputStream = new ByteArrayOutputStream();
-            bufferedImage = ImageIO.read(new File(folderPath + File.separator + imageName) );
+            bufferedImage = ImageIO.read(new File(folderPath + File.separator + imageName));
             String format = imageName.substring(imageName.lastIndexOf(".") + 1);
             ImageIO.write(bufferedImage, format, byteArrayOutputStream);
             byteArrayOutputStream.flush();
