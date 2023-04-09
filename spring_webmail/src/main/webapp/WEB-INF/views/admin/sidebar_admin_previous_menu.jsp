@@ -15,6 +15,6 @@
     <body>
         <br> <br>
         
-        <a href="admin_menu"> 이전 메뉴로 </a>
+        <a href="admin_menu"> 이전 메뉴로 </a> &nbsp;
     </body>
 </html>

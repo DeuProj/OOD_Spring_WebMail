@@ -27,7 +27,7 @@
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
         <script>
             <c:if test="${!empty msg}">
-            alert("${msg}");
+            alert("${msg}");    
             </c:if>
         </script>
     </head>
