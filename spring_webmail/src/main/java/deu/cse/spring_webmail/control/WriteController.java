@@ -65,6 +65,8 @@ public class WriteController {
                 bos.write(upFile.getBytes());
             } catch (IOException e) {
                 log.error("upload.do: 오류 발생 - {}", e.getMessage());
+                attrs.addFlashAttribute("msg", "파일 업로드 중 오류가 발생했습니다.");
+                return "redirect:/write_mail";
             }
         }
         boolean sendSuccessful = sendMessage(to, cc, subj, body, upFile);
