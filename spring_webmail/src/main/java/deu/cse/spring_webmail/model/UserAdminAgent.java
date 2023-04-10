@@ -348,4 +348,13 @@ public class UserAdminAgent {
         }
         return status;
     }   //setPassword()
+    
+    public boolean regularExpression(String str) {
+        // 영어, 숫자, 특수문자를 나타내는 정규 표현식입니다.
+        String re = "^[a-zA-Z0-9!@#$%^&*()_+\\-={}|;':\",./<>?]*$";
+
+        // 정규 표현식과 입력 문자열을 비교합니다.
+        // matches() 메서드는 입력 문자열이 정규 표현식과 일치하는 경우 true를 반환합니다.
+        return str.matches(re);
+    }
 }
