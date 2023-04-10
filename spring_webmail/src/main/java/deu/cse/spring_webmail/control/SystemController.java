@@ -197,23 +197,23 @@ public class SystemController {
             UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
                     ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
 
-            // 한글 검사
-            if (isKorean(newPassword)) {
-                attrs.addFlashAttribute("msg", String.format("비밀번호에 한글은 입력할 수 없습니다."));
+            // 영어, 숫자, 특수문자에 대한 검사
+            if (!agent.regularExpression(newPassword)) {
+                attrs.addFlashAttribute("msg", String.format("영어, 숫자, 일부 특수문자만 입력할 수 있습니다."));
                 return "redirect:/admin_menu";
-            }
-
-            // if (setPassword successful) 비밀번호 변경 성공 팝업창
-            // else 비밀번호 변경 실패 팝업창
-            if (agent.setPassword(s_id, s_pw, currentPassword, newPassword, checkPassword)) {
-                attrs.addFlashAttribute("msg", String.format("비밀번호 변경을 성공하였습니다."));
-                return "redirect:/";
             } else {
-                attrs.addFlashAttribute("msg", String.format("비밀번호 변경을 실패하였습니다."));
-                if (isAdmin(s_id)) {
-                    return "redirect:/admin_menu";
+                // if (setPassword successful) 비밀번호 변경 성공 팝업창
+                // else 비밀번호 변경 실패 팝업창
+                if (agent.setPassword(s_id, s_pw, currentPassword, newPassword, checkPassword)) {
+                    attrs.addFlashAttribute("msg", String.format("비밀번호 변경을 성공하였습니다."));
+                    return "redirect:/";
                 } else {
-                    return "redirect:/main_menu";
+                    attrs.addFlashAttribute("msg", String.format("비밀번호 변경을 실패하였습니다."));
+                    if (isAdmin(s_id)) {
+                        return "redirect:/admin_menu";
+                    } else {
+                        return "redirect:/main_menu";
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -224,18 +224,6 @@ public class SystemController {
                 return "redirect:/main_menu";
             }
         }
-    }
-
-    //한글이 있는지에 대한 검사
-    private boolean isKorean(String str) {
-        for (char c : str.toCharArray()) {
-            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO
-                    || Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HANGUL_JAMO
-                    || Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HANGUL_SYLLABLES) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @GetMapping("/delete_user")
