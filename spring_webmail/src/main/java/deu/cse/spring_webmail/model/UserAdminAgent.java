@@ -349,12 +349,63 @@ public class UserAdminAgent {
         return status;
     }   //setPassword()
     
-    public boolean regularExpression(String str) {
-        // 영어, 숫자, 특수문자를 나타내는 정규 표현식입니다.
-        String re = "^[a-zA-Z0-9!@#$%^&*()_+\\-={}|;':\",./<>?]*$";
+    public boolean regularExpression(String str, boolean flag) {
+        if (flag) {//아이디 확인시
+            //영어, 숫자를 나타내는 정규 표현식
+            String re = "^[a-zA-Z0-9]*$";
 
-        // 정규 표현식과 입력 문자열을 비교합니다.
-        // matches() 메서드는 입력 문자열이 정규 표현식과 일치하는 경우 true를 반환합니다.
-        return str.matches(re);
+            // 정규 표현식과 입력 문자열을 비교
+            return str.matches(re);
+        } else {//비밀번호 확인시
+            // 영어, 숫자, 특수문자를 나타내는 정규 표현식
+            String re = "^[a-zA-Z0-9!@#$%^&*()_+\\-={}|;':\",./<>?]*$";
+
+            // 정규 표현식과 입력 문자열을 비교
+            return str.matches(re);
+        }
     }
+
+    public boolean signUp(String id, String password, String checkPassword) {
+        boolean status = false;
+        byte[] messageBuffer = new byte[1024];
+
+        log.debug("signUp() called");
+        if (!isConnected) {
+            return status;
+        }
+        System.out.println("test");
+        try {
+            if (password.equals(checkPassword)) { //입력된 비밀번호가 서로 일치하는지 확인
+                // 1: "adduser" command
+                String addUserCommand = "adduser " + id + " " + password + EOL;
+                os.write(addUserCommand.getBytes());
+
+                // 2: response for "adduser" command
+                java.util.Arrays.fill(messageBuffer, (byte) 0);
+                //if (is.available() > 0) {
+                is.read(messageBuffer);
+                String recvMessage = new String(messageBuffer);
+                log.debug(recvMessage);
+                //}
+                // 3: 기존 메일사용자 여부 확인
+                if (recvMessage.contains("added")) {
+                    status=true;
+                } else {
+                    status = false;
+                }
+                // 4: 연결 종료
+                quit();
+                System.out.flush();  // for test
+                socket.close();
+            } else {
+                status = false;
+            }
+        } catch (Exception ex) {
+            log.error("signUp 예외: {}", ex.getMessage());
+            status = false;
+        } finally {
+            // 5: 상태 반환
+            return status;
+        }
+    }//signUp()
 }
