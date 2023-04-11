@@ -149,6 +149,41 @@ public class SystemController {
         return "admin/admin_menu";
     }
 
+    @GetMapping("/sign_up")
+    public String signUp() {
+        return "sign_up";
+    }
+
+    @PostMapping("/sign_up.do")
+    public String signUpDo(@RequestParam String id, @RequestParam String password, @RequestParam String checkPassword, RedirectAttributes attrs) {
+        log.debug("sign_up.do: id = {}, password = {}, checkPassword={}, port = {}", id, password, checkPassword, JAMES_CONTROL_PORT);
+
+        try {
+            String cwd = ctx.getRealPath(".");
+            UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd, ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
+
+            // if 회원가입 성공 팝업창
+            // else 회원가입 실패 팝업창
+            if (agent.regularExpression(id, true)) { //아이디에 영어, 숫자만 존재하는지
+                if (agent.regularExpression(password, false)) {//비밀번호에 영어, 숫자, 일부 특수문자만 존재하는지
+                    if (agent.signUp(id, password, checkPassword)) {
+                        attrs.addFlashAttribute("msg", String.format("(%s)님 회원가입을 성공하였습니다.", id));
+                    } else {
+                        attrs.addFlashAttribute("msg", String.format("(%s)로 회원가입을 실패하였습니다.", id));
+                    }
+                } else {
+                    attrs.addFlashAttribute("msg", String.format("비밀번호에 영어, 숫자, 일부 특수문자만 입력할 수 있습니다."));
+                }
+            } else {
+                attrs.addFlashAttribute("msg", String.format("ID에 영어, 숫자만 입력할 수 있습니다."));
+            }
+        } catch (Exception ex) {
+            log.error("sign_up.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
+        }
+
+        return "redirect:/";
+    }
+    
     @GetMapping("/add_user")
     public String addUser() {
         return "admin/add_user";
@@ -198,7 +233,7 @@ public class SystemController {
                     ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
 
             // 영어, 숫자, 특수문자에 대한 검사
-            if (!agent.regularExpression(newPassword)) {
+            if (!agent.regularExpression(newPassword,false)) {
                 attrs.addFlashAttribute("msg", String.format("영어, 숫자, 일부 특수문자만 입력할 수 있습니다."));
                 return "redirect:/admin_menu";
             } else {
