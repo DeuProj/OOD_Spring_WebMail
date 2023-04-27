@@ -97,34 +97,38 @@ public class WriteController {
      */
     private boolean sendMessage(String to, String cc, String subject, String body, MultipartFile upFile) {
         boolean status = false;
+            try {
 
-        // 1. toAddress, ccAddress, subject, body, file1 정보를 파싱하여 추출
-
-
-        // 2.  request 객체에서 HttpSession 객체 얻기
+            // 1. toAddress, ccAddress, subject, body, file1 정보를 파싱하여 추출
 
 
-        // 3. HttpSession 객체에서 메일 서버, 메일 사용자 ID 정보 얻기
-        String host = (String) session.getAttribute("host");
-        String userid = (String) session.getAttribute("userid");
+            // 2.  request 객체에서 HttpSession 객체 얻기
 
-        // 4. SmtpAgent 객체에 메일 관련 정보 설정
-        SmtpAgent agent = new SmtpAgent(host, userid);
-        agent.setTo(to);
-        agent.setCc(cc);
-        agent.setSubj(subject);
-        agent.setBody(body);
-        String fileName = upFile.getOriginalFilename();
-        
-        if (fileName != null && !"".equals(fileName)) {
-            log.debug("sendMessage: 파일({}) 첨부 필요", fileName);
-            File f = new File(ctx.getRealPath(UPLOAD_FOLDER) + File.separator + fileName);
-            agent.setFile1(f.getAbsolutePath());
-        }
 
-        // 5. 메일 전송 권한 위임
-        if (agent.sendMessage()) {
-            status = true;
+            // 3. HttpSession 객체에서 메일 서버, 메일 사용자 ID 정보 얻기
+            String host = (String) session.getAttribute("host");
+            String userid = (String) session.getAttribute("userid");
+
+            // 4. SmtpAgent 객체에 메일 관련 정보 설정
+            SmtpAgent agent = new SmtpAgent(host, userid);
+            agent.setTo(to);
+            agent.setCc(cc);
+            agent.setSubj(subject);
+            agent.setBody(body);
+            String fileName = upFile.getOriginalFilename();
+
+            if (fileName != null && !"".equals(fileName)) {
+                log.debug("sendMessage: 파일({}) 첨부 필요", fileName);
+                File f = new File(ctx.getRealPath(UPLOAD_FOLDER) + File.separator + fileName);
+                agent.setFile1(f.getAbsolutePath());
+            }
+
+            // 5. 메일 전송 권한 위임
+            if (agent.sendMessage()) {
+                status = true;
+            }
+        } catch (Exception ex) {
+            log.error("sendMessage: 메일 전송 중 오류 발생 - {}", ex.getMessage());
         }
         return status;
     }  // sendMessage()
