@@ -16,6 +16,8 @@ import java.nio.file.Paths;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,46 +40,58 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @PropertySource("classpath:/system.properties")
+@AllArgsConstructor
 @Slf4j
 public class ReadController {
 
-    @Autowired
+    // Field Injection에서 Constructor Injection으로 변경
     private ServletContext ctx;
-    @Autowired
     private HttpSession session;
-    @Autowired
     private HttpServletRequest request;
+
     @Value("${file.download_folder}")
     private String DOWNLOAD_FOLDER;
 
     @GetMapping("/show_message")
-    public String showMessage(@RequestParam Integer msgid, Model model) {
+    public String showMessage(
+            @RequestParam Integer msgid, Model model
+    ) {
         log.debug("download_folder = {}", DOWNLOAD_FOLDER);
-        
+
         Pop3Agent pop3 = new Pop3Agent();
-        pop3.setHost((String) session.getAttribute("host"));
-        pop3.setUserid((String) session.getAttribute("userid"));
-        pop3.setPassword((String) session.getAttribute("password"));
+        try {
+            // Type casting에 대한 핸들링 필요
+            pop3.setHost((String) session.getAttribute("host"));
+            pop3.setUserid((String) session.getAttribute("userid"));
+            pop3.setPassword((String) session.getAttribute("password"));
+        } catch(ClassCastException e) {
+            // Error Handling with return
+        }
         pop3.setRequest(request);
-        
+
         String msg = pop3.getMessage(msgid);
         session.setAttribute("sender", pop3.getSender());  // 220612 LJM - added
         session.setAttribute("subject", pop3.getSubject());
         session.setAttribute("body", pop3.getBody());
         model.addAttribute("msg", msg);
+
         return "/read_mail/show_message";
     }
-    
+
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(@RequestParam("userid") String userId,
-            @RequestParam("filename") String fileName) {
+    public ResponseEntity<Resource> download(
+            @RequestParam("userid") String userId,
+            @RequestParam("filename") String fileName
+    ) {
         log.debug("userid = {}, filename = {}", userId, fileName);
+        // 프로덕션에서 예상하지 못한 동작 발생 가능성이 있음
+        // ex) 프로덕션 레벨에서의 인코딩 검증
         try {
             log.debug("userid = {}, filename = {}", userId, MimeUtility.decodeText(fileName));
         } catch (UnsupportedEncodingException ex) {
             log.error("error");
         }
-        
+
         // 1. 내려받기할 파일의 기본 경로 설정
         String basePath = ctx.getRealPath(DOWNLOAD_FOLDER) + File.separator + userId;
 
@@ -85,10 +99,15 @@ public class ReadController {
         Path path = Paths.get(basePath + File.separator + fileName);
         String contentType = null;
         try {
+            // 이 부분에서 IOException 발생 시 contentType = null
+            // catch에서는 계속 진행
+            // 따라서 아래의 contentType은 전부 null
             contentType = Files.probeContentType(path);
             log.debug("File: {}, Content-Type: {}", path.toString(), contentType);
         } catch (IOException e) {
             log.error("downloadDo: 오류 발생 - {}", e.getMessage());
+            // contentType의 default가 null이 되어도 괜찮음
+            // 추후 오류 발생 시, API가 진행될 수 없음을 알려야 함
         }
 
         // 3. Http 헤더 생성
@@ -105,16 +124,20 @@ public class ReadController {
             log.error("downloadDo: 오류 발생 - {}", e.getMessage());
         }
         if (resource == null) {
+            // TODO: 오류 발생의 원인이 사용자뿐 아니라 다양함
+            // Not found가 아님에도 사용자에게 잘못된 정보를 전달해 혼선을 야기할 수 있음
             return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
+
+        // Transaction에 대한 이해가 필요
     }
-    
+
     @GetMapping("/delete_mail.do")
     public String deleteMailDo(@RequestParam("msgid") Integer msgId, RedirectAttributes attrs) {
         log.debug("delete_mail.do: msgid = {}", msgId);
-        
+
         String host = (String) session.getAttribute("host");
         String userid = (String) session.getAttribute("userid");
         String password = (String) session.getAttribute("password");
@@ -126,7 +149,7 @@ public class ReadController {
         } else {
             attrs.addFlashAttribute("msg", "메시지 삭제를 실패하였습니다.");
         }
-        
+
         return "redirect:main_menu";
     }
 }
