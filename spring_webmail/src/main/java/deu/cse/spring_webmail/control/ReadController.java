@@ -17,7 +17,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,13 +39,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @PropertySource("classpath:/system.properties")
-@AllArgsConstructor
 @Slf4j
 public class ReadController {
 
     // Field Injection에서 Constructor Injection으로 변경
+    @Autowired
     private ServletContext ctx;
+    @Autowired
     private HttpSession session;
+    @Autowired
     private HttpServletRequest request;
 
     @Value("${file.download_folder}")
