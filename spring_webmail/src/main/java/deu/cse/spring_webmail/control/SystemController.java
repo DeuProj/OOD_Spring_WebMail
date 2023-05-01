@@ -183,7 +183,7 @@ public class SystemController {
 
         return "redirect:/";
     }
-    
+
     @GetMapping("/add_user")
     public String addUser() {
         return "admin/add_user";
@@ -233,7 +233,7 @@ public class SystemController {
                     ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
 
             // 영어, 숫자, 특수문자에 대한 검사
-            if (!agent.regularExpression(newPassword,false)) {
+            if (!agent.regularExpression(newPassword, false)) {
                 attrs.addFlashAttribute("msg", String.format("영어, 숫자, 일부 특수문자만 입력할 수 있습니다."));
                 return "redirect:/admin_menu";
             } else {
@@ -288,6 +288,43 @@ public class SystemController {
         }
 
         return "redirect:/admin_menu";
+    }
+
+    @GetMapping("/user_withdrawal") //회원 탈퇴
+    public String userWithdrawal() {
+        return "user_withdrawal";
+    }
+
+    @PostMapping("user_withdraw.do")
+    public String userWithdrawalDo(@RequestParam String currentPassword, RedirectAttributes attrs, HttpSession session) {
+        // 세션에 있는 id, pw값 가져오기
+        String s_id = (String) session.getAttribute("userid");
+        String s_pw = (String) session.getAttribute("password");
+        log.debug("withdrawal.do: currentPassword = {}", currentPassword);
+        try {
+            String cwd = ctx.getRealPath(".");
+            UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
+                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
+
+            // 비밀번호 일치 검사
+            if (!s_pw.equals(currentPassword)) {
+                attrs.addFlashAttribute("msg", String.format("비밀번호가 일치하지 않습니다."));
+                return "redirect:/main_menu";
+            } else {
+                // 회원탈퇴 처리
+                if (agent.userWithdrawal(s_id)) {
+                    attrs.addFlashAttribute("msg", String.format("회원탈퇴를 성공하였습니다."));
+                    session.invalidate(); // 세션 제거
+                    return "redirect:/";
+                } else {
+                    attrs.addFlashAttribute("msg", String.format("회원탈퇴를 실패하였습니다."));
+                    return "redirect:/main_menu";
+                }
+            }
+        } catch (Exception ex) {
+            log.error("withdrawal.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
+            return "redirect:/main_menu";
+        }
     }
 
     private List<String> getUserList() {

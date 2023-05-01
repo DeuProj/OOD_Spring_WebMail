@@ -307,7 +307,7 @@ public class UserAdminAgent {
         boolean status = false;
         byte[] messageBuffer = new byte[1024];
         log.debug("setPassword() called");
-        
+
         if (!isConnected) {
             return status;
         }
@@ -348,7 +348,7 @@ public class UserAdminAgent {
         }
         return status;
     }   //setPassword()
-    
+
     public boolean regularExpression(String str, boolean flag) {
         if (flag) {//아이디 확인시
             //영어, 숫자를 나타내는 정규 표현식
@@ -373,7 +373,6 @@ public class UserAdminAgent {
         if (!isConnected) {
             return status;
         }
-        System.out.println("test");
         try {
             if (password.equals(checkPassword)) { //입력된 비밀번호가 서로 일치하는지 확인
                 // 1: "adduser" command
@@ -389,7 +388,7 @@ public class UserAdminAgent {
                 //}
                 // 3: 기존 메일사용자 여부 확인
                 if (recvMessage.contains("added")) {
-                    status=true;
+                    status = true;
                 } else {
                     status = false;
                 }
@@ -408,4 +407,38 @@ public class UserAdminAgent {
             return status;
         }
     }//signUp()
+
+    public boolean userWithdrawal(String id) {
+        byte[] messageBuffer = new byte[1024];
+        String command;
+        String recvMessage;
+        boolean status = false;
+
+        if (!isConnected) {
+            return status;
+        }
+
+        try {
+            // 1: "deluser" 명령 송신
+            command = "deluser " + id + EOL;
+            os.write(command.getBytes());
+            log.debug(command);
+
+            // 2: 응답 메시지 수신
+            java.util.Arrays.fill(messageBuffer, (byte) 0);
+            is.read(messageBuffer);
+
+            // 3: 응답 메시지 분석
+            recvMessage = new String(messageBuffer);
+            log.debug("recvMessage = {}", recvMessage);
+            if (recvMessage.contains("deleted")) {
+                status = true;
+            }
+            quit();
+        } catch (Exception ex) {
+            log.error("userWithdrawal(): 예외 = {}", ex.getMessage());
+        } finally {
+            return status;
+        }
+    }//userWithdrawal()
 }
