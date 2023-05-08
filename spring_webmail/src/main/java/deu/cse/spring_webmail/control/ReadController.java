@@ -79,6 +79,18 @@ public class ReadController {
         return "/read_mail/show_message";
     }
 
+    @GetMapping("/sent_mail")
+    public String sentmenu(Model model) {
+        Pop3Agent pop3 = new Pop3Agent();
+        pop3.setHost((String) session.getAttribute("host"));
+        pop3.setUserid((String) session.getAttribute("userid"));
+        pop3.setPassword((String) session.getAttribute("password"));
+
+        String messageList = pop3.getSentMessageList();
+        model.addAttribute("messageList", messageList);
+        return "/read_mail/show_sent_message";
+    }
+    
     @GetMapping("/download")
     public ResponseEntity<Resource> download(
             @RequestParam("userid") String userId,

@@ -38,6 +38,10 @@ td#sender {
     width: 20%;
 }
 
+td#receiver {
+    width: 20%;
+}
+
 td#date {
     width: 22%;
 }
