@@ -78,6 +78,9 @@ public class SmtpAgent {
                 }
                 msg.setRecipients(Message.RecipientType.CC, this.cc);
             }
+            
+            // 보낸 메일함 용 BCC 추가
+            msg.addRecipient(Message.RecipientType.BCC, new InternetAddress(this.userid));
 
             //msg.setSubject(s);
 //            msg.setSubject(MimeUtility.encodeText(this.subj, "euc-kr", "B"));
