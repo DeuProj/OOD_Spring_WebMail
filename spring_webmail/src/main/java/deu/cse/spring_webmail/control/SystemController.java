@@ -283,6 +283,7 @@ public class SystemController {
             UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
                     ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
             agent.deleteUsers(selectedUsers);  // 수정!!!
+            attrs.addFlashAttribute("msg", "선택한 사용자가 제거되었습니다."); //사용자 제거 완료 메세지 
         } catch (Exception ex) {
             log.error("delete_user.do : 예외 = {}", ex);
         }

@@ -15,6 +15,21 @@
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
         <script type="text/javascript">
             function getConfirmResult() {
+                var checkboxes = document.getElementsByName("selectedUsers");
+                var isChecked = false;
+
+                for (var i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].checked) {
+                        isChecked = true;
+                        break;
+                    }
+                }
+
+                if (!isChecked) {
+                    alert("삭제할 사용자를 선택해 주세요.");
+                    return false;
+                }
+                
                 var result = confirm("사용자를 정말로 삭제하시겠습니까?");
                 return result;
             }
