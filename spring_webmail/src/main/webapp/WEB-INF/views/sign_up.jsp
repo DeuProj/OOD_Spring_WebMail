@@ -28,15 +28,15 @@
                 <table border="0" align="left">
                     <tr>
                         <td>사용자 ID</td>
-                        <td> <input type="text" name="id" value="" size="20" />  </td>
+                        <td> <input type="text" name="id" value="" size="20" maxlength="10" />  </td>
                     </tr>
                     <tr>
                         <td>비밀번호 </td>
-                        <td> <input type="password" name="password" value="" /> </td>
+                        <td> <input type="password" name="password" value="" maxlength="20" /> </td>
                     </tr>
                     <tr>
                         <td>비밀번호 확인 </td>
-                        <td> <input type="password" name="checkPassword" value=""/></td>
+                        <td> <input type="password" name="checkPassword" value="" maxlength="20"/></td>
                     </tr>
                     <tr>
                         <td colspan="2">
@@ -45,7 +45,7 @@
                         </td>
                     </tr>
                 </table>
-
+                
             </form>
         </div>
 
