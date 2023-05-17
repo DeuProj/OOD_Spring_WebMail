@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +51,14 @@ public class LoginController {
         session.setAttribute("host", JAMES_HOST);
         session.setAttribute("debug", "false");
         return "thymeleaf/login";
+    }
+    @RequestMapping("/404")
+    public String accessDenied404() {
+        return "thymeleaf/404Denied";
+    }
+    @RequestMapping("/500")
+    public String accessDenied505() {
+        return "thymeleaf/500Denied";
     }
 
     @GetMapping("/loginSuccess")
