@@ -17,7 +17,7 @@
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
         <script type="text/javascript">
             function gohome() {
-                window.location = "${pageContext.request.contextPath}"
+                window.location = "/login"
             }
         </script>
     </head>
@@ -34,7 +34,7 @@
 
             자동으로 화면 전환이 일어나지 않을 경우
             <!-- <a href="/WebMailSystem/" title="초기 화면">초기 화면</a>을 선택해 주세요.-->
-            <a href="${pageContext.request.contextPath}" title="초기 화면">초기 화면</a>을 선택해 주세요.
+            <a href="/login" title="초기 화면">초기 화면</a>을 선택해 주세요.
         </p>
 
         <%@include file="footer.jspf"%>

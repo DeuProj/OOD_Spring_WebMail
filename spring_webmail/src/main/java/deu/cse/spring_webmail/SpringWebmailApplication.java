@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ClassPathResource;
 
-@ComponentScan
+
 @SpringBootApplication
 @Slf4j
 public class SpringWebmailApplication {

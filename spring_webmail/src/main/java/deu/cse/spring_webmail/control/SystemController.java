@@ -58,60 +58,6 @@ public class SystemController {
     @Value("${james.host}")
     private String JAMES_HOST;
 
-    @GetMapping("/")
-    public String index() {
-        log.debug("index() called...");
-        session.setAttribute("host", JAMES_HOST);
-        session.setAttribute("debug", "false");
-
-        return "/index";
-    }
-
-    @RequestMapping(value = "/login.do", method = {RequestMethod.GET, RequestMethod.POST})
-    public String loginDo(@RequestParam Integer menu) {
-        String url = "";
-        log.debug("로그인 처리: menu = {}", menu);
-        switch (menu) {
-            case CommandType.LOGIN:
-                String host = (String) request.getSession().getAttribute("host");
-                String userid = request.getParameter("userid");
-                String password = request.getParameter("passwd");
-
-                // Check the login information is valid using <<model>>Pop3Agent.
-                Pop3Agent pop3Agent = new Pop3Agent(host, userid, password);
-                boolean isLoginSuccess = pop3Agent.validate();
-
-                // Now call the correct page according to its validation result.
-                if (isLoginSuccess) {
-                    if (isAdmin(userid)) {
-                        // HttpSession 객체에 userid를 등록해 둔다.
-                        session.setAttribute("userid", userid);
-                        session.setAttribute("password", password);
-                        // response.sendRedirect("admin_menu.jsp");
-                        url = "redirect:/admin_menu";
-                    } else {
-                        // HttpSession 객체에 userid와 password를 등록해 둔다.
-                        session.setAttribute("userid", userid);
-                        session.setAttribute("password", password);
-                        // response.sendRedirect("main_menu.jsp");
-                        url = "redirect:/main_menu";  // URL이 http://localhost:8080/webmail/main_menu 이와 같이 됨.
-                        // url = "/main_menu";  // URL이 http://localhost:8080/webmail/login.do?menu=91 이와 같이 되어 안 좋음
-                    }
-                } else {
-                    // RequestDispatcher view = request.getRequestDispatcher("login_fail.jsp");
-                    // view.forward(request, response);
-                    url = "redirect:/login_fail";
-                }
-                break;
-            case CommandType.LOGOUT:
-                session.invalidate();
-                url = "redirect:/";  // redirect: 반드시 넣어야만 컨텍스트 루트로 갈 수 있음
-                break;
-            default:
-                break;
-        }
-        return url;
-    }
 
     @GetMapping("/login_fail")
     public String loginFail() {

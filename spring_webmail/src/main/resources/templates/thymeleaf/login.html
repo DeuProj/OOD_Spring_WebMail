@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Login</title>
+  <link type="text/css" rel="stylesheet" href="css/main_style.css" />
+</head>
+<body>
+<div id="login_header">
+  웹메일 시스템
+</div>
+<div id="login_form">
+<form th:action="@{/login}" method="post">
+  사용자: <input type="text" name="username" size="20" autofocus> <br />
+  암&nbsp;&nbsp;&nbsp;호: <input type="password" name="password" size="20"> <br /> <br />
+  <input type="submit" value="로그인" name="B1">&nbsp;&nbsp;&nbsp;
+  <input type="reset" value="다시 입력" name="B2">
+</form>
+</div>
+<div id="footer">
+  &copy; 2022, Professor Jong Min Lee <br />
+  Dept. of Computer Software Engineering, Dong-eui University <br />
+  WebMail System (Revised for the Spring Framework)
+</div>
+</body>
+</html>
