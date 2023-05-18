@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -17,15 +18,14 @@ import org.springframework.stereotype.Component;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private UserDetailsService userDetailsService;
-    private BringDataFromJames bringDataFromJames;
     private PasswordEncoder passwordEncoder;
-
+    private BringDataFromJames bringDataFromJames;
 
     @Autowired
-    public CustomAuthenticationProvider(UserDetailsService userDetailsService, BringDataFromJames bringDataFromJames, PasswordEncoder passwordEncoder) {
+    public CustomAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, BringDataFromJames bringDataFromJames) {
         this.userDetailsService = userDetailsService;
-        this.bringDataFromJames = bringDataFromJames;
         this.passwordEncoder = passwordEncoder;
+        this.bringDataFromJames = bringDataFromJames;
     }
 
     @Override
@@ -33,14 +33,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
+        bringDataFromJames.bringData(username,password);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         if (!passwordEncoder.matches(password, passwordEncoder.encode(userDetails.getPassword()))) {
             throw new BadCredentialsException("Invalid password");
         }
-        bringDataFromJames.setUserId(username);
-        bringDataFromJames.setPassword(password);
-        bringDataFromJames.bringData();
+
         return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
     }
 

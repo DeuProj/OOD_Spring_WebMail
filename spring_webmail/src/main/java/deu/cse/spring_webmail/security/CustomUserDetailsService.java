@@ -19,21 +19,18 @@ import java.util.List;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-
     private UserRepository userRepository;
 
     @Autowired
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(userEntity.getRole());
-
         return new User(userEntity.getUsername(), userEntity.getPassword(), authorities);
     }
 }
