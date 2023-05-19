@@ -28,17 +28,18 @@ public class BringDataFromJames {
     public void bringData(String userId, String password){
         Pop3Agent pop3Agent = new Pop3Agent("127.0.0.1", userId, password);
         try {
-            pop3Agent.validate();
-            if (userRepository.findByUsername(userId).isEmpty()) {
-                UserEntity userEntity = new UserEntity();
-                userEntity.setUsername(userId);
-                userEntity.setPassword(password);
-                if (userId.equals("admin")) {
-                    userEntity.setRole("ADMIN");
-                    userRepository.save(userEntity);
-                } else {
-                    userEntity.setRole("USER");
-                    userRepository.save(userEntity);
+            if (pop3Agent.validate()) {
+                if (userRepository.findByUsername(userId).isEmpty()) {
+                    UserEntity userEntity = new UserEntity();
+                    userEntity.setUsername(userId);
+                    userEntity.setPassword(password);
+                    if (userId.equals("admin")) {
+                        userEntity.setRole("ADMIN");
+                        userRepository.save(userEntity);
+                    } else {
+                        userEntity.setRole("USER");
+                        userRepository.save(userEntity);
+                    }
                 }
             }
         }catch (NullPointerException e){
