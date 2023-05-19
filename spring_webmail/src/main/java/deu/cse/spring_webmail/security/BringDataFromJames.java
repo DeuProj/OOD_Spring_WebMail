@@ -26,6 +26,7 @@ public class BringDataFromJames {
     }
 
     public void bringData(String userId, String password){
+
         Pop3Agent pop3Agent = new Pop3Agent("127.0.0.1", userId, password);
         try {
             if (pop3Agent.validate()) {
