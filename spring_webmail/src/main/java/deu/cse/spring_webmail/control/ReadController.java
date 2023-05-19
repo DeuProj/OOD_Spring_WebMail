@@ -80,13 +80,16 @@ public class ReadController {
     }
 
     @GetMapping("/sent_mail")
-    public String sentmenu(Model model) {
+    public String sentmenu(Model model, @RequestParam(value = "page", required = false) Integer page) {
         Pop3Agent pop3 = new Pop3Agent();
         pop3.setHost((String) session.getAttribute("host"));
         pop3.setUserid((String) session.getAttribute("userid"));
         pop3.setPassword((String) session.getAttribute("password"));
 
-        String messageList = pop3.getSentMessageList();
+        // 현재 페이지 요청
+        int currentPage = (page != null) ? page : 1;
+        
+        String messageList = pop3.getSentMessageList(currentPage);
         model.addAttribute("messageList", messageList);
         return "/read_mail/show_sent_message";
     }
