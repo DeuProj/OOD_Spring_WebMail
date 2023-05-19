@@ -123,7 +123,7 @@ public class Pop3Agent {
         }
     }
     
-    public String getSentMessageList() {
+    public String getSentMessageList(int page) {
         String result = "";
         Message[] messages = null;
 
@@ -145,6 +145,7 @@ public class Pop3Agent {
             folder.fetch(messages, fp);
 
             MessageFormatter formatter = new MessageFormatter(userid);  //3.5
+            formatter.setCurrentPage(page); // 페이지 설정
             result = formatter.getSentMessageTable(messages);   // 3.6
 
             folder.close(true);  // 3.7
@@ -152,9 +153,9 @@ public class Pop3Agent {
         } catch (Exception ex) {
             log.error("Pop3Agent.getMessageList() : exception = {}", ex.getMessage());
             result = "Pop3Agent.getMessageList() : exception = " + ex.getMessage();
-        } finally {
-            return result;
         }
+        
+        return result;
     }
 
     public String getMessage(int n) {
