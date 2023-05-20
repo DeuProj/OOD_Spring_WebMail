@@ -38,6 +38,9 @@ public class MessageFormatter {
     public String getMessageTable(Message[] messages) {
         StringBuilder buffer = new StringBuilder();
 
+//        int startMessageIndex = (currentPage - 1) * messagesPerPage;
+//        int endMessageIndex = Math.min(startMessageIndex + messagesPerPage, messages.length);
+
         // 메시지 제목 보여주기
         buffer.append("<table>");  // table start
         buffer.append("<tr> "
@@ -48,11 +51,17 @@ public class MessageFormatter {
                 + " <th> 삭제 </td>   "
                 + " </tr>");
 
-        for (int i = messages.length - 1; i >= 0; i--) {
+//        int firstIndex = Math.min(currentPage * messagesPerPage - 1, messages.length - 1);
+        int firstIndex = (messages.length - 1) - (currentPage - 1) * 10;
+//        int lastIndex = Math.max(firstIndex - messagesPerPage + 1, 0);
+        int lastIndex = Math.max(firstIndex - messagesPerPage + 1, 0);
+
+        for (int i = firstIndex; i >= lastIndex; i--) {
             MessageParser parser = new MessageParser(messages[i], userid);
             parser.parse(false);  // envelope 정보만 필요
             // 메시지 헤더 포맷
             // 추출한 정보를 출력 포맷 사용하여 스트링으로 만들기
+            // TODO: 자신에게 보낸 메일 처리 필요
             if (!parser.getFromAddress().equalsIgnoreCase(userid)) {
                 buffer.append("<tr> "
                         + " <td id=no>" + (i + 1) + " </td> "
@@ -68,6 +77,17 @@ public class MessageFormatter {
             }
         }
         buffer.append("</table>");
+
+        int totalPages = (int) Math.ceil((double) messages.length / messagesPerPage);
+        buffer.append("<div style='text-align: center;'><br>");
+        for (int i = 1; i <= totalPages; i++) {
+            if (i == currentPage) {
+                buffer.append("[" + i + "] ");
+            } else {
+                buffer.append("<a href='main_menu?page=" + i + "'>" + i + "</a> ");
+            }
+        }
+        buffer.append("</div><br>");
 
         return buffer.toString();
 //        return "MessageFormatter 테이블 결과";
