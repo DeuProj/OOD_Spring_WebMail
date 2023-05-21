@@ -21,13 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -75,7 +69,10 @@ public class SystemController {
     }
 
     @GetMapping("/main_menu")
-    public String mainmenu(Model model, @RequestParam(value = "page", required = false) Integer page) {
+    public String mainmenu(Model model, @RequestParam(value = "page", required = false) Integer page,
+                           @SessionAttribute("host") String host,
+                           @SessionAttribute("userid") String userid,
+                           @SessionAttribute("password") String password) {
         Pop3Agent pop3 = new Pop3Agent();
         pop3.setHost((String) session.getAttribute("host"));
         pop3.setUserid((String) session.getAttribute("userid"));
