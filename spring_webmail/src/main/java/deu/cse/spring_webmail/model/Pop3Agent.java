@@ -11,6 +11,8 @@ import jakarta.mail.Message;
 import jakarta.mail.Session;
 import jakarta.mail.Store;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
@@ -126,6 +128,18 @@ public class Pop3Agent {
             fp.add(FetchProfile.Item.ENVELOPE);
             folder.fetch(messages, fp);
 
+            Arrays.sort(messages, new Comparator<Message>() {
+                public int compare(Message m1, Message m2) {
+                    try {
+                        // 각 메시지의 수신 일자를 가져와 비교
+                        return m1.getSentDate().compareTo(m2.getSentDate());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+
             MessageFormatter formatter = new MessageFormatter(userid);  //3.5
             formatter.setCurrentPage(page); // 페이지 설정
             result = formatter.getMessageTable(messages);   // 3.6
@@ -137,7 +151,6 @@ public class Pop3Agent {
             result = "Pop3Agent.getMessageList() : exception = " + ex.getMessage();
         }
         return result;
-
     }
 
     public String getSentMessageList(int page) {
