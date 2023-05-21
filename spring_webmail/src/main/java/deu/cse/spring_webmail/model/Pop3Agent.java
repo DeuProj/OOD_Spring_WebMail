@@ -8,11 +8,11 @@ import jakarta.mail.FetchProfile;
 import jakarta.mail.Flags;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.Store;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
@@ -127,18 +127,8 @@ public class Pop3Agent {
             // From, To, Cc, Bcc, ReplyTo, Subject & Date
             fp.add(FetchProfile.Item.ENVELOPE);
             folder.fetch(messages, fp);
-
-            Arrays.sort(messages, new Comparator<Message>() {
-                public int compare(Message m1, Message m2) {
-                    try {
-                        // 각 메시지의 수신 일자를 가져와 비교
-                        return m1.getSentDate().compareTo(m2.getSentDate());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return 0;
-                    }
-                }
-            });
+            
+            messages = sortMessagesByDate(messages);
 
             MessageFormatter formatter = new MessageFormatter(userid);  //3.5
             formatter.setCurrentPage(page); // 페이지 설정
@@ -173,6 +163,8 @@ public class Pop3Agent {
             // From, To, Cc, Bcc, ReplyTo, Subject & Date
             fp.add(FetchProfile.Item.ENVELOPE);
             folder.fetch(messages, fp);
+            
+            messages = sortMessagesByDate(messages);
 
             MessageFormatter formatter = new MessageFormatter(userid);  //3.5
             formatter.setCurrentPage(page); // 페이지 설정
@@ -214,11 +206,25 @@ public class Pop3Agent {
         } catch (Exception ex) {
             log.error("Pop3Agent.getMessageList() : exception = {}", ex);
             result = "Pop3Agent.getMessage() : exception = " + ex;
-        } finally {
-            return result;
         }
+        
+        return result;
+
     }
 
+    private Message[] sortMessagesByDate(Message[] messages) {
+        Arrays.sort(messages, (m1, m2) -> {
+            try {
+                return m1.getSentDate().compareTo(m2.getSentDate());
+            } catch (MessagingException ex) {
+                log.error("Pop3Agent.sortMessagesByDate() : exception = {}", ex);
+                return 0;
+            }
+        });
+
+        return messages;
+    }
+    
     private boolean connectToStore() {
         boolean status = false;
         Properties props = System.getProperties();
@@ -239,9 +245,9 @@ public class Pop3Agent {
             status = true;
         } catch (Exception ex) {
             log.error("connectToStore 예외: {}", ex.getMessage());
-        } finally {
-            return status;
         }
+        
+        return status;
     }
 
 }
