@@ -38,9 +38,6 @@ public class MessageFormatter {
     public String getMessageTable(Message[] messages) {
         StringBuilder buffer = new StringBuilder();
 
-//        int startMessageIndex = (currentPage - 1) * messagesPerPage;
-//        int endMessageIndex = Math.min(startMessageIndex + messagesPerPage, messages.length);
-
         // 메시지 제목 보여주기
         buffer.append("<table>");  // table start
         buffer.append("<tr> "
@@ -52,8 +49,7 @@ public class MessageFormatter {
                 + " </tr>");
 
 //        int firstIndex = Math.min(currentPage * messagesPerPage - 1, messages.length - 1);
-        int firstIndex = (messages.length - 1) - (currentPage - 1) * 10;
-//        int lastIndex = Math.max(firstIndex - messagesPerPage + 1, 0);
+        int firstIndex = (messages.length - 1) - (currentPage - 1) * messagesPerPage;
         int lastIndex = Math.max(firstIndex - messagesPerPage + 1, 0);
 
         for (int i = firstIndex; i >= lastIndex; i--) {
