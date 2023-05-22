@@ -140,7 +140,17 @@ public class SystemController {
             RedirectAttributes attrs) {
         log.debug("add_user.do: id = {}, password = {}, port = {}",
                 id, password, JAMES_CONTROL_PORT);
-
+        
+        Pop3Agent pop3 = new Pop3Agent();
+        pop3.setHost((String) session.getAttribute("host"));
+        pop3.setUserid(id);
+        pop3.setPassword(password);
+        
+        if (pop3.validate()) {
+            attrs.addFlashAttribute("msg", String.format("이미 존재하는 사용자입니다.", id));
+            return "redirect:/add_user";
+        }
+        
         try {
             String cwd = ctx.getRealPath(".");
             UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
