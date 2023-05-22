@@ -4,17 +4,13 @@
  */
 package deu.cse.spring_webmail.model;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -106,10 +102,10 @@ public class UserAdminAgent {
         } catch (Exception ex) {
             log.error("addUser 예외: {}", ex.getMessage());
             status = false;
-        } finally {
-            // 5: 상태 반환
-            return status;
         }
+        
+        return status;
+        
     }  // addUser()
 
     public List<String> getUserList() {
@@ -139,9 +135,10 @@ public class UserAdminAgent {
             quit();
         } catch (Exception ex) {
             log.error("getUserList(): 예외 = {}", ex.getMessage());
-        } finally {
-            return userList;
         }
+        
+        return userList;
+        
     }  // getUserList()
 
     private List<String> parseUserList(String message) {
@@ -201,9 +198,10 @@ public class UserAdminAgent {
             quit();
         } catch (Exception ex) {
             log.error("deleteUsers(): 예외 = {}", ex.getMessage());
-        } finally {
-            return status;
         }
+        
+        return status;
+
     }  // deleteUsers()
 
     public boolean verify(String userid) {
@@ -227,9 +225,9 @@ public class UserAdminAgent {
             quit();  // quit command
         } catch (IOException ex) {
             log.error("verify(): 예외 = {}", ex.getMessage());
-        } finally {
-            return status;
         }
+        
+        return status;
     }
 
     private boolean connect() {
@@ -298,9 +296,9 @@ public class UserAdminAgent {
             }
         } catch (IOException ex) {
             log.error("quit() 예외: {}", ex);
-        } finally {
-            return status;
         }
+        
+        return status;
     }
 
     public boolean setPassword(String s_id, String s_pw, String currentPassword, String newPassword, String checkPassword) {
@@ -402,10 +400,10 @@ public class UserAdminAgent {
         } catch (Exception ex) {
             log.error("signUp 예외: {}", ex.getMessage());
             status = false;
-        } finally {
-            // 5: 상태 반환
-            return status;
         }
+        // 5: 상태 반환
+        return status;
+
     }//signUp()
 
     public boolean userWithdrawal(String id) {
@@ -437,8 +435,8 @@ public class UserAdminAgent {
             quit();
         } catch (Exception ex) {
             log.error("userWithdrawal(): 예외 = {}", ex.getMessage());
-        } finally {
-            return status;
         }
+        return status;
+
     }//userWithdrawal()
 }
