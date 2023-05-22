@@ -21,6 +21,7 @@
         <p> <a href="main_menu"> 메일 읽기 </a> </p>
         <p> <a href="sent_mail"> 보낸 메일 </a> </p>
         <p> <a href="write_mail"> 메일 쓰기 </a> </p>
+        <p> <a href="addrbook"> 주소록 </a> </p>
         <p> <a href="set_password"> 비밀번호 변경 </a> </p>
         <p><a href="/login">로그아웃</a></p> <hr>
         <p> <a href="user_withdrawal"> 회원 탈퇴 </a></p>
