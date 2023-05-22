@@ -181,7 +181,11 @@ public class SystemController {
             // 영어, 숫자, 특수문자에 대한 검사
             if (!agent.regularExpression(newPassword, false)) {
                 attrs.addFlashAttribute("msg", String.format("영어, 숫자, 일부 특수문자만 입력할 수 있습니다."));
-                return "redirect:/admin_menu";
+                if (isAdmin(s_id)) {
+                    return "redirect:/admin_menu";
+                } else {
+                    return "redirect:/main_menu";
+                }
             } else {
                 // if (setPassword successful) 비밀번호 변경 성공 팝업창
                 // else 비밀번호 변경 실패 팝업창
