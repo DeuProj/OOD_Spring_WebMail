@@ -12,11 +12,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>회원 탈퇴 화면</title>
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
-        <script>
-            <c:if test="${!empty msg}">
-                alert("${msg}");
-            </c:if>
-        </script>
     </head>
     <body>
         <%@include file="header.jspf" %>
@@ -42,5 +37,8 @@
             </form>
         </div>
         <%@include file="footer.jspf" %>
+        
+        <span id="message" style="display: none;">${msg}</span><!-- alart message -->
+        <script src="js/alartMsg.js"></script>
     </body>
 </html>

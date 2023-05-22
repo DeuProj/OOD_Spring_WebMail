@@ -67,5 +67,7 @@
         </div>
 
         <jsp:include page="../footer.jspf" />
+        <span id="message" style="display: none;">${msg}</span><!-- alart message -->
+        <script src="js/alartMsg.js"></script>
     </body>
 </html>

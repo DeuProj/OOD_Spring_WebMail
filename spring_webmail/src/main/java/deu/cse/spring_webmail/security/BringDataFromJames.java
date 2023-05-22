@@ -10,9 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
 @Data
 @Slf4j
 @Service
@@ -42,6 +39,8 @@ public class BringDataFromJames {
                         userRepository.save(userEntity);
                     }
                 }
+            } else if (!userRepository.findByUsername(userId).isEmpty()) {
+                userRepository.deleteById(userRepository.findByUsername(userId).get().getId());
             }
         }catch (NullPointerException e){
             throw new BadCredentialsException("유효하지 않은 아이디");
