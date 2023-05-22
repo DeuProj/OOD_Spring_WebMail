@@ -31,6 +31,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -80,7 +81,11 @@ public class ReadController {
     }
 
     @GetMapping("/sent_mail")
-    public String sentmenu(Model model, @RequestParam(value = "page", required = false) Integer page) {
+    public String sentmenu(Model model, 
+                           @RequestParam(value = "page", required = false) Integer page,
+                           @SessionAttribute("host") String host,
+                           @SessionAttribute("userid") String userid,
+                           @SessionAttribute("password") String password) {
         Pop3Agent pop3 = new Pop3Agent();
         pop3.setHost((String) session.getAttribute("host"));
         pop3.setUserid((String) session.getAttribute("userid"));
