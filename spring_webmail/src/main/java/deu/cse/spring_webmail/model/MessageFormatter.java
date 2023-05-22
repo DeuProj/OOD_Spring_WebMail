@@ -38,6 +38,17 @@ public class MessageFormatter {
     public String getMessageTable(Message[] messages) {
         StringBuilder buffer = new StringBuilder();
 
+        //javascript로 메시지 삭제 확인 팝업창 생성
+        buffer.append("<script>\n" +
+                "function clickButton(i) {\n" +
+                "  var confirmed = confirm('메일을 영구적으로 삭제합니다.');\n" +
+                "  if (confirmed) {\n" +
+                "    var tmp = Number(i) + 1;\n" +
+                "    window.location.href = 'delete_mail.do?msgid=' + tmp;\n" +
+                "  }\n" +
+                "}\n" +
+                "</script>");
+
         // 메시지 제목 보여주기
         buffer.append("<table>");  // table start
         buffer.append("<tr> "
@@ -57,19 +68,20 @@ public class MessageFormatter {
             parser.parse(false);  // envelope 정보만 필요
             // 메시지 헤더 포맷
             // 추출한 정보를 출력 포맷 사용하여 스트링으로 만들기
-            // TODO: 자신에게 보낸 메일 처리 필요
+
             if (!parser.getFromAddress().equalsIgnoreCase(userid)) {
-                buffer.append("<tr> "
-                        + " <td id=no>" + (i + 1) + " </td> "
-                        + " <td id=sender>" + parser.getFromAddress() + "</td>"
-                        + " <td id=subject> "
-                        + " <a href=show_message?msgid=" + (i + 1) + " title=\"메일 보기\"> "
-                        + parser.getSubject() + "</a> </td>"
-                        + " <td id=date>" + parser.getSentDate() + "</td>"
-                        + " <td id=delete>"
-                        + "<a href=delete_mail.do"
-                        + "?msgid=" + (i + 1) + "> 삭제 </a>" + "</td>"
-                        + " </tr>");
+            buffer.append("<tr> "
+                    + " <td id=no>" + (i + 1) + " </td> "
+                    + " <td id=sender>" + parser.getFromAddress() + "</td>"
+                    + " <td id=subject> "
+                    + " <a href=show_message?msgid=" + (i + 1) + " title=\"메일 보기\"> "
+                    + parser.getSubject() + "</a> </td>"
+                    + " <td id=date>" + parser.getSentDate() + "</td>"
+                    + " <td id=delete>"
+//                    + "<a href=delete_mail.do"
+                    + "<a onclick=\"clickButton(" + (i + 1) + ")\""
+                    + "?msgid=" + (i + 1) + "> 삭제 </a>" + "</td>"
+                    + " </tr>");
             }
         }
         buffer.append("</table>");

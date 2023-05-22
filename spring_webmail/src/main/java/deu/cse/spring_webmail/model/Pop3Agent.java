@@ -14,6 +14,7 @@ import jakarta.mail.Store;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Properties;
+import javax.script.*;
 import javax.servlet.http.HttpServletRequest;
 
 import lombok.Getter;
@@ -93,11 +94,12 @@ public class Pop3Agent {
 
             // 폴더에서 메시지 삭제
             // Message [] expungedMessage = folder.expunge();
+
             // <-- 현재 지원 안 되고 있음. 폴더를 close()할 때 expunge해야 함.
             folder.close(true);  // expunge == true
             store.close();
             status = true;
-        } catch (Exception ex) {
+        }catch (Exception ex) {
             log.error("deleteMessage() error: {}", ex.getMessage());
         } finally {
             return status;

@@ -74,9 +74,9 @@ public class SystemController {
                            @SessionAttribute("userid") String userid,
                            @SessionAttribute("password") String password) {
         Pop3Agent pop3 = new Pop3Agent();
-        pop3.setHost((String) session.getAttribute("host"));
-        pop3.setUserid((String) session.getAttribute("userid"));
-        pop3.setPassword((String) session.getAttribute("password"));
+        pop3.setHost(host);
+        pop3.setUserid(userid);
+        pop3.setPassword(password);
 
         // 현재 페이지 요청
         int currentPage = (page != null) ? page : 1;
