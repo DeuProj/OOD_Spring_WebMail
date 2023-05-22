@@ -69,9 +69,9 @@ public class Pop3Agent {
         } catch (Exception ex) {
             log.error("Pop3Agent.validate() error : " + ex);
             status = false;  // for clarity
-        } finally {
-            return status;
         }
+        return status;
+
     }
 
     public boolean deleteMessage(int msgid, boolean really_delete) {
@@ -99,9 +99,9 @@ public class Pop3Agent {
             status = true;
         } catch (Exception ex) {
             log.error("deleteMessage() error: {}", ex.getMessage());
-        } finally {
-            return status;
         }
+        return status;
+
     }
 
     /*
