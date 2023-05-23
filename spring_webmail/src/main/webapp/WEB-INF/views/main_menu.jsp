@@ -16,6 +16,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>주메뉴 화면</title>
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
+        <span id="delete_url" style="display: none;">/delete_mail.do?msgid=</span><!-- delete url -->
     </head>
     <body>
         <%@include file="header.jspf"%>
@@ -30,6 +31,7 @@
         </div>
 
         <%@include file="footer.jspf"%>
+        <script src="js/confirmMsg.js" type="text/javascript"></script>
         <span id="message" style="display: none;">${msg}</span><!-- alart message -->
         <script src="js/alartMsg.js"></script>
     </body>
