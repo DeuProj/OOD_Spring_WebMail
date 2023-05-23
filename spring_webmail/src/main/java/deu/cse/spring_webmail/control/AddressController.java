@@ -68,14 +68,17 @@ public class AddressController {
     }
     
     @GetMapping("/delete_addrbook.do")
-    public String deleteAddrBookDo(@RequestParam("email") String email, Model model) {
-        model.addAttribute("email", email);
-        String userId = (String) session.getAttribute("userid");
-        addrBookAgent.setUserId(userId);
+    public String deleteAddrBookDo(
+            @RequestParam("email") String email,
+            RedirectAttributes attrs,
+            Model model) {
+        addrBookAgent.setUserId((String) session.getAttribute("userid"));
         
         try {
             addrBookAgent.deleteAddrBookEntry(email);
+            attrs.addFlashAttribute("msg", "주소록 삭제를 성공하였습니다.");
         } catch (Exception ex) {
+            attrs.addFlashAttribute("msg", "주소록 삭제를 실패하였습니다.");
             log.error("Failed deleteAddrBookDo() : {}", ex);
         }
         

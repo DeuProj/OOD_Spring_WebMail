@@ -13,6 +13,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>주소록</title>
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
+        <span id="delete_url" style="display: none;">/delete_addrbook.do?email=</span><!-- delete url -->
     </head>
     <body>
         <%@include file="../header.jspf"%>

@@ -64,8 +64,8 @@ public class MessageFormatter {
                     + parser.getSubject() + "</a> </td>"
                     + " <td id=date>" + parser.getSentDate() + "</td>"
                     + " <td id=delete>"
-                    + "<a href=delete_mail.do"
-                    + "?msgid=" + (i + 1) + "> 삭제 </a>" + "</td>"
+                    + "<a id=" + (i + 1) 
+                    + " class=\"delete-link\">삭제</a>" + "</td>"
                     + " </tr>");
             }
         buffer.append("</table>");
@@ -126,8 +126,8 @@ public class MessageFormatter {
                     + parser.getSubject() + "</a> </td>"
                     + " <td id=date>" + parser.getSentDate() + "</td>"
                     + " <td id=delete>"
-                    + "<a href=delete_mail.do"
-                    + "?msgid=" + (indexOfSentMessage.get(i)) + "> 삭제 </a>" + "</td>"
+                    + "<a id=" + (indexOfSentMessage.get(i))
+                    + " class=\"delete-link\">삭제</a>" + "</td>"
                     + " </tr>");
         }
         buffer.append("</table>");
