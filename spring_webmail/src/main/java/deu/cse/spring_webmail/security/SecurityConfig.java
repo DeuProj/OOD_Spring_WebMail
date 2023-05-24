@@ -73,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              .and()
                 .frameOptions()
                 .sameOrigin()
-                .contentSecurityPolicy("default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'")
+                .contentSecurityPolicy("script-src 'self'; frame-ancestors 'self'")
              .and().and()
                 .csrf().disable();
     }

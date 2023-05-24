@@ -17,7 +17,7 @@
         <title>주메뉴 화면</title>
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
         <span id="delete_url" style="display: none;">/delete_mail.do?msgid=</span><!-- delete url -->
-        <meta http-equiv="refresh" content="10"><!-- 10초마다 페이지 자동 갱신 -->
+        <meta http-equiv="refresh" content="10"><!-- 1분(60초)마다 페이지 자동 갱신 -->
     </head>
     <body>
         <%@include file="header.jspf"%>
