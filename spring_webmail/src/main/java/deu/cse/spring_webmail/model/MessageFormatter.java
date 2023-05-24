@@ -24,7 +24,7 @@ public class MessageFormatter {
     @NonNull private String userid;  // 파일 임시 저장 디렉토리 생성에 필요
     @Getter @Setter
     private HttpServletRequest request = null;
-
+    
     // 220612 LJM - added to implement REPLY
     @Getter private String sender;
     @Getter private String subject;
@@ -38,16 +38,6 @@ public class MessageFormatter {
     public String getMessageTable(Message[] messages) {
         StringBuilder buffer = new StringBuilder();
 
-        //javascript로 메시지 삭제 확인 팝업창 생성
-        buffer.append("<script>\n" +
-                "function clickButton(i) {\n" +
-                "  var confirmed = confirm('메일을 영구적으로 삭제합니다.');\n" +
-                "  if (confirmed) {\n" +
-                "    window.location.href = 'delete_mail.do?msgid=' + i;\n" +
-                "  }\n" +
-                "}\n" +
-                "</script>");
-
         // 메시지 제목 보여주기
         buffer.append("<table>");  // table start
         buffer.append("<tr> "
@@ -58,7 +48,6 @@ public class MessageFormatter {
                 + " <th> 삭제 </td>   "
                 + " </tr>");
 
-//        int firstIndex = Math.min(currentPage * messagesPerPage - 1, messages.length - 1);
         int firstIndex = (messages.length - 1) - (currentPage - 1) * messagesPerPage;
         int lastIndex = Math.max(firstIndex - messagesPerPage + 1, 0);
 
@@ -67,20 +56,17 @@ public class MessageFormatter {
             parser.parse(false);  // envelope 정보만 필요
             // 메시지 헤더 포맷
             // 추출한 정보를 출력 포맷 사용하여 스트링으로 만들기
-
-//            if (!parser.getFromAddress().equalsIgnoreCase(userid)) {
-                buffer.append("<tr> "
-                        + " <td id=no>" + (i + 1) + " </td> "
-                        + " <td id=sender>" + parser.getFromAddress() + "</td>"
-                        + " <td id=subject> "
-                        + " <a href=show_message?msgid=" + (i) + " title=\"메일 보기\"> "
-                        + parser.getSubject() + "</a> </td>"
-                        + " <td id=date>" + parser.getSentDate() + "</td>"
-                        + " <td id=delete>"
-//                        + "<a href=delete_mail.do?msgid=" + (i) + ">삭제</a> </td>"
-                        + "<a onclick=\"clickButton(" + i + ")\">삭제</a> </td>"
-                        + " </tr>");
-//            }
+            buffer.append("<tr> "
+                    + " <td id=no>" + (i + 1) + " </td> "
+                    + " <td id=sender>" + parser.getFromAddress() + "</td>"
+                    + " <td id=subject> "
+                    + " <a href=show_message?msgid=" + (i + 1) + " title=\"메일 보기\"> "
+                    + parser.getSubject() + "</a> </td>"
+                    + " <td id=date>" + parser.getSentDate() + "</td>"
+                    + " <td id=delete>"
+                    + "<a id=" + (i + 1) 
+                    + " class=\"delete-link\">삭제</a>" + "</td>"
+                    + " </tr>");
             }
         buffer.append("</table>");
 
@@ -167,7 +153,7 @@ public class MessageFormatter {
         // MessageParser parser = new MessageParser(message, userid);
         MessageParser parser = new MessageParser(message, userid, request);
         parser.parse(true);
-
+        
         sender = parser.getFromAddress();
         subject = parser.getSubject();
         body = parser.getBody();
