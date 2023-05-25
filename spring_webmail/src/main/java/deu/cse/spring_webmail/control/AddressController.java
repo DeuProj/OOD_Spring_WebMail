@@ -56,7 +56,7 @@ public class AddressController {
     }
     
     @GetMapping("/insert_addrbook")
-    public String insertAddressBook() {
+    public String insertAddrBook() {
         return "/addrbook/insert_addrbook";
     }
     
@@ -86,7 +86,7 @@ public class AddressController {
     }
     
     @PostMapping("/insert.do")
-    public String insertAddressBook(
+    public String insertAddrBookDo(
             @RequestParam String email, 
             @RequestParam String name,                                    
             @RequestParam String phone, 
@@ -108,7 +108,7 @@ public class AddressController {
     }
     
     @PostMapping("/update.do")
-    public String updateAddressBook(
+    public String updateAddrBookDo(
             @RequestParam String email,
             @RequestParam String name,                           
             @RequestParam String phone,
