@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-<form enctype="multipart/form-data" method="POST" action="write_mail.do" >
+<form enctype="multipart/form-data" method="POST" action="write_mail.do" id="mailForm" >
 <table>
     <tr>
         <td> 수신 </td>
@@ -39,7 +39,7 @@
     </tr>
     <tr>
         <td>첨부 파일</td>
-        <td> <input type="file" name="file1"  size="80">  </td>
+        <td> <input type="file" name="file1" id="fileInput" size="80">  </td>
     </tr>
     <tr>
         <td colspan="2">
@@ -49,3 +49,4 @@
     </tr>
 </table>
 </form>
+<script src="js/checkFile.js"></script>
